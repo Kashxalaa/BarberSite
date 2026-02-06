@@ -1,0 +1,103 @@
+:root {
+            --admin-accent: #D4AF37;
+            --admin-bg-alt: #1a1d21; /* Lighter than main black for contrast */
+            --input-focus: #2a2e35;
+        }
+
+        .admin-container { max-width: 1000px; margin: 2rem auto; padding: 0 2rem; }
+        
+        /* --- HIGH CONTRAST MANUAL ENTRY FORM --- */
+        .manual-booking-card {
+            background: var(--admin-bg-alt);
+            border: 1px solid var(--admin-accent);
+            padding: 2.5rem;
+            border-radius: 24px;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .manual-booking-card h3 { 
+            margin-top: 0; 
+            color: var(--admin-accent); 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .manual-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            align-items: flex-end;
+        }
+
+        .field-group { display: flex; flex-direction: column; gap: 8px; }
+
+        .field-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--admin-accent);
+            letter-spacing: 1px;
+        }
+
+        /* Improved Visibility for Inputs */
+        .manual-form-grid input, 
+        .manual-form-grid select {
+            width: 105%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #000000; /* Pitch black for high contrast against the grey card */
+            color: #ffffff;
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .manual-form-grid input:focus, 
+        .manual-form-grid select:focus {
+            border-color: var(--admin-accent);
+            background: var(--input-focus);
+        }
+
+        .btn-add {
+            background: var(--admin-accent);
+            color: #000;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        /* Stats & Table Styling */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--card-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); text-align: center; }
+        .stat-card h4 { font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 5px; }
+        .stat-card p { font-size: 1.8rem; font-weight: 800; color: var(--admin-accent); margin: 0; }
+        
+        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
+        th { background: rgba(212, 175, 55, 0.15); color: var(--admin-accent); text-align: left; padding: 1.2rem; font-size: 0.8rem; text-transform: uppercase; }
+        td { padding: 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+        
+        .badge { padding: 6px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        .badge-manual { background: #444; color: #fff; }
+        .badge-deposit { background: rgba(39, 174, 96, 0.2); color: #27ae60; }
+        
+        .btn-delete { background: none; border: 1px solid var(--danger); color: var(--danger); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .btn-delete:hover { background: var(--danger); color: white; }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .manual-form-grid { grid-template-columns: 1fr; }
+        }
