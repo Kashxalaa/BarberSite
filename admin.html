@@ -5,96 +5,218 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barber Dashboard | SHARP & DAPPER</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        .admin-container { max-width: 1000px; margin: 4rem auto; padding: 0 2rem; }
+        :root {
+            --admin-accent: #D4AF37;
+            --admin-bg-alt: #1a1d21; /* Lighter than main black for contrast */
+            --input-focus: #2a2e35;
+        }
+
+        .admin-container { max-width: 1000px; margin: 2rem auto; padding: 0 2rem; }
+        
+        /* --- HIGH CONTRAST MANUAL ENTRY FORM --- */
+        .manual-booking-card {
+            background: var(--admin-bg-alt);
+            border: 1px solid var(--admin-accent);
+            padding: 2.5rem;
+            border-radius: 24px;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .manual-booking-card h3 { 
+            margin-top: 0; 
+            color: var(--admin-accent); 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .manual-form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            align-items: flex-end;
+        }
+
+        .field-group { display: flex; flex-direction: column; gap: 8px; }
+
+        .field-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--admin-accent);
+            letter-spacing: 1px;
+        }
+
+        /* Improved Visibility for Inputs */
+        .manual-form-grid input, 
+        .manual-form-grid select {
+            width: 105%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: #000000; /* Pitch black for high contrast against the grey card */
+            color: #ffffff;
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .manual-form-grid input:focus, 
+        .manual-form-grid select:focus {
+            border-color: var(--admin-accent);
+            background: var(--input-focus);
+        }
+
+        .btn-add {
+            background: var(--admin-accent);
+            color: #000;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        /* Stats & Table Styling */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
         .stat-card { background: var(--card-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); text-align: center; }
-        .stat-card h4 { color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; }
-        .stat-card p { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin: 0; }
+        .stat-card h4 { font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 5px; }
+        .stat-card p { font-size: 1.8rem; font-weight: 800; color: var(--admin-accent); margin: 0; }
         
         table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
-        th { background: rgba(212, 175, 55, 0.1); color: var(--primary); text-align: left; padding: 1rem; font-size: 0.9rem; }
-        td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-        tr:last-child td { border-bottom: none; }
+        th { background: rgba(212, 175, 55, 0.15); color: var(--admin-accent); text-align: left; padding: 1.2rem; font-size: 0.8rem; text-transform: uppercase; }
+        td { padding: 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
         
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
-        .badge-deposit { background: rgba(212, 175, 55, 0.2); color: var(--primary); }
-        .badge-full { background: rgba(39, 174, 96, 0.2); color: #27ae60; }
+        .badge { padding: 6px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        .badge-manual { background: #444; color: #fff; }
+        .badge-deposit { background: rgba(39, 174, 96, 0.2); color: #27ae60; }
         
-        .btn-delete { background: none; border: 1px solid var(--danger); color: var(--danger); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+        .btn-delete { background: none; border: 1px solid var(--danger); color: var(--danger); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         .btn-delete:hover { background: var(--danger); color: white; }
-        .empty-state { text-align: center; padding: 3rem; color: var(--text-dim); }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .manual-form-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="logo">ADMIN<span>PANEL</span></div>
-        <a href="index.html" style="color: var(--text); text-decoration: none; font-size: 0.9rem;">← Back to Site</a>
+        <a href="index.html" style="color: var(--text); text-decoration: none; font-weight: 600;">← Back to Site</a>
     </nav>
 
     <main class="admin-container">
-        <header class="hero-text">
-            <h1>Daily Schedule</h1>
-            <p>Manage your upcoming appointments and revenue.</p>
-        </header>
+        <section class="manual-booking-card">
+            <h3>Add Appointment (Phone/Walk-in)</h3>
+            <form id="manual-booking-form" class="manual-form-grid">
+                <div class="field-group">
+                    <label>Client Name</label>
+                    <input type="text" id="m-name" required placeholder="Full Name">
+                </div>
+                <div class="field-group">
+                    <label>Service</label>
+                    <select id="m-service">
+                        <option value="Haircut Only">Haircut Only ($30)</option>
+                        <option value="Hair & Beard">Hair & Beard ($45)</option>
+                        <option value="The Royal Treatment">The Royal Treatment ($65)</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label>Date</label>
+                    <input type="date" id="m-date" required>
+                </div>
+                <div class="field-group">
+                    <label>Time</label>
+                    <select id="m-time">
+                        <option value="09:00">09:00</option><option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option><option value="12:00">12:00</option>
+                        <option value="13:00">13:00</option><option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option><option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-add">Confirm Booking</button>
+            </form>
+        </section>
 
         <div class="stats-grid">
-            <div class="stat-card">
-                <h4>Total Bookings</h4>
-                <p id="stat-count">0</p>
-            </div>
-            <div class="stat-card">
-                <h4>Today</h4>
-                <p id="stat-today">0</p>
-            </div>
-            <div class="stat-card">
-                <h4>Est. Revenue</h4>
-                <p id="stat-revenue">$0</p>
-            </div>
+            <div class="stat-card"><h4>Active Appointments</h4><p id="stat-count">0</p></div>
+            <div class="stat-card"><h4>Due Today</h4><p id="stat-today">0</p></div>
+            <div class="stat-card"><h4>Est. Revenue</h4><p id="stat-revenue">$0</p></div>
         </div>
 
-        <div id="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Customer</th>
-                        <th>Service</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Payment</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-table-body">
-                    </tbody>
-            </table>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="admin-table-body"></tbody>
+        </table>
     </main>
 
     <script>
+        const manualForm = document.getElementById('manual-booking-form');
+
+        manualForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const newBooking = {
+                name: document.getElementById('m-name').value + " 📞",
+                service: document.getElementById('m-service').value,
+                date: document.getElementById('m-date').value,
+                time: document.getElementById('m-time').value,
+                paid: "Manual Entry"
+            };
+
+            const db = JSON.parse(localStorage.getItem('barberBookings')) || [];
+            const isTaken = db.some(b => b.date === newBooking.date && b.time === newBooking.time);
+            
+            if(isTaken) {
+                alert("This slot is already occupied!");
+                return;
+            }
+
+            db.push(newBooking);
+            localStorage.setItem('barberBookings', JSON.stringify(db));
+            manualForm.reset();
+            loadBookings();
+        });
+
         function loadBookings() {
             const db = JSON.parse(localStorage.getItem('barberBookings')) || [];
             const tbody = document.getElementById('admin-table-body');
             const todayStr = new Date().toISOString().split("T")[0];
-            
             tbody.innerHTML = '';
-            
-            if (db.length === 0) {
-                document.getElementById('table-container').innerHTML = '<div class="empty-state">No appointments found yet.</div>';
-                return;
-            }
 
             let revenue = 0;
             let todayCount = 0;
 
-            // Sort by date and time
             db.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
 
             db.forEach((booking, index) => {
-                // Calculate Stats
                 if (booking.date === todayStr) todayCount++;
-                revenue += booking.paid.includes('Deposit') ? 10 : parseInt(booking.paid.replace(/\D/g, ''));
+                
+                let price = booking.service === "Haircut Only" ? 30 : (booking.service === "Hair & Beard" ? 45 : 65);
+                revenue += price;
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -102,8 +224,8 @@
                     <td>${booking.service}</td>
                     <td>${booking.date}</td>
                     <td>${booking.time}</td>
-                    <td><span class="badge ${booking.paid.includes('Deposit') ? 'badge-deposit' : 'badge-full'}">${booking.paid}</span></td>
-                    <td><button class="btn-delete" onclick="deleteBooking(${index})">Cancel</button></td>
+                    <td><span class="badge ${booking.paid === 'Manual Entry' ? 'badge-manual' : 'badge-deposit'}">${booking.paid}</span></td>
+                    <td><button class="btn-delete" onclick="deleteBooking(${index})">Remove</button></td>
                 `;
                 tbody.appendChild(row);
             });
@@ -114,7 +236,7 @@
         }
 
         function deleteBooking(index) {
-            if (confirm('Are you sure you want to cancel this appointment?')) {
+            if (confirm('Permanently remove this appointment?')) {
                 const db = JSON.parse(localStorage.getItem('barberBookings')) || [];
                 db.splice(index, 1);
                 localStorage.setItem('barberBookings', JSON.stringify(db));
@@ -122,7 +244,6 @@
             }
         }
 
-        // Run on load
         loadBookings();
     </script>
 </body>
