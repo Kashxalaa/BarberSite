@@ -3,6 +3,7 @@
     --admin-bg-alt: #1a1d21;
     --input-focus: #2a2e35;
 }
+
 .admin-container { max-width: 1000px; margin: 2rem auto; padding: 0 2rem; }
 
 /* Manual Entry Form */
@@ -14,31 +15,38 @@
     margin-bottom: 3rem;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+
 .manual-booking-card h3 { 
     margin-top: 0; color: var(--admin-accent); 
     text-transform: uppercase; letter-spacing: 2px;
     font-size: 1.1rem; margin-bottom: 1.5rem;
 }
+
 .manual-form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 20px; align-items: flex-end;
 }
+
 .field-group { display: flex; flex-direction: column; gap: 8px; }
+
 .field-group label {
     font-size: 0.75rem; font-weight: 700;
     text-transform: uppercase; color: var(--admin-accent);
 }
+
 .manual-form-grid input, .manual-form-grid select {
     width: 100%; padding: 14px; border-radius: 12px;
     border: 1px solid var(--border); background: #000;
     color: #fff; font-size: 1rem; outline: none;
 }
+
 .btn-add {
     background: var(--admin-accent); color: #000;
     border: none; padding: 15px; border-radius: 12px;
     font-weight: 900; text-transform: uppercase; cursor: pointer;
 }
+
 /* Stats */
 .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
 .stat-card { background: var(--card-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); text-align: center; }

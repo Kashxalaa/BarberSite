@@ -1,4 +1,5 @@
 const manualForm = document.getElementById('manual-booking-form');
+
 manualForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const newBooking = {
@@ -14,6 +15,7 @@ manualForm.addEventListener('submit', (e) => {
     manualForm.reset();
     loadBookings();
 });
+
 function loadBookings() {
     const db = JSON.parse(localStorage.getItem('barberBookings')) || [];
     const tbody = document.getElementById('admin-table-body');
@@ -38,10 +40,12 @@ function loadBookings() {
         `;
         tbody.appendChild(row);
     });
+
     document.getElementById('stat-count').textContent = db.length;
     document.getElementById('stat-today').textContent = todayCount;
     document.getElementById('stat-revenue').textContent = `$${revenue}`;
 }
+
 function deleteBooking(index) {
     if (confirm('Delete this appointment?')) {
         const db = JSON.parse(localStorage.getItem('barberBookings')) || [];
@@ -50,4 +54,5 @@ function deleteBooking(index) {
         loadBookings();
     }
 }
+
 loadBookings();
