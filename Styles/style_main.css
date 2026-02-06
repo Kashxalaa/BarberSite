@@ -51,7 +51,7 @@ body {
 }
 
 .section-title { 
-    margin-bottom: 2rem; font-size: 0.75rem; text-transform: uppercase; 
+    margin-bottom: rem; font-size: 0.75rem; text-transform: uppercase; 
     letter-spacing: 2px; color: var(--primary); font-weight: 700;
 }
 
@@ -68,6 +68,7 @@ body {
 
 /* --- CUSTOM DATE INPUT DESIGN --- */
 .booking-glass-card {
+    margin-top: 6%;
     background: var(--card-bg); border: 1px solid var(--border);
     padding: 3rem; border-radius: 30px; backdrop-filter: blur(20px);
 }
