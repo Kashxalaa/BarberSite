@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHARP & DAPPER | Premium Bookings</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="glow-bg"></div>
+    
+    <nav class="navbar">
+        <div class="logo">SHARP<span>&</span>DAPPER</div>
+        <button id="theme-toggle" class="theme-btn">🌙</button>
+    </nav>
+
+    <main class="booking-container">
+        <section class="services-sidebar">
+            <h2 class="section-title">Select Service</h2>
+            <div class="service-list">
+                <div class="service-card selected" data-price="30" data-name="Haircut Only">
+                    <div class="service-info">
+                        <h3>Haircut Only</h3>
+                        <p>Clean fade or classic scissor cut</p>
+                    </div>
+                    <span class="price">$30</span>
+                </div>
+
+                <div class="service-card" data-price="45" data-name="Hair & Beard">
+                    <div class="service-info">
+                        <h3>Hair & Beard</h3>
+                        <p>Complete grooming & sculpt</p>
+                    </div>
+                    <span class="price">$45</span>
+                </div>
+
+                <div class="service-card" data-price="65" data-name="The Royal Treatment">
+                    <div class="service-info">
+                        <h3>The Royal Treatment</h3>
+                        <p>Hair, Beard, and Hot Towel Shave</p>
+                    </div>
+                    <span class="price">$65</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="booking-main">
+            <div id="booking-flow" class="booking-glass-card">
+                <div class="input-wrapper">
+                    <label>Pick a Date</label>
+                    <input type="date" id="booking-date">
+                </div>
+
+                <div id="time-section" class="hidden animate-in">
+                    <div class="section-divider"><span>Available Hours</span></div>
+                    <div id="time-slots" class="slots-grid"></div>
+                </div>
+
+                <form id="final-form" class="hidden animate-in">
+                    <div class="section-divider"><span>Finalize Appointment</span></div>
+                    
+                    <div class="input-wrapper">
+                        <label>Your Name</label>
+                        <input type="text" id="user-name" required placeholder="Enter Full Name">
+                    </div>
+                    
+                    <div class="payment-box">
+                        <p class="pay-label">Choose Payment</p>
+                        <div class="pay-options">
+                            <label class="pay-choice">
+                                <input type="radio" name="pay-method" value="deposit" checked>
+                                <span>Pay $10 Deposit</span>
+                            </label>
+                            <label class="pay-choice">
+                                <input type="radio" name="pay-method" value="full">
+                                <span>Pay Full (<span id="total-display">$30</span>)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-pay">Reserve My Chair</button>
+                </form>
+            </div>
+
+            <div id="success-msg" class="booking-glass-card hidden animate-in">
+                <div class="success-icon">✓</div>
+                <h2>Confirmed!</h2>
+                <p id="summary-text"></p>
+                <button class="btn-outline" onclick="location.reload()">Book Another</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barber Dashboard | SHARP & DAPPER</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-container { max-width: 1000px; margin: 4rem auto; padding: 0 2rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--card-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); text-align: center; }
+        .stat-card h4 { color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-card p { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin: 0; }
+        
+        table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
+        th { background: rgba(212, 175, 55, 0.1); color: var(--primary); text-align: left; padding: 1rem; font-size: 0.9rem; }
+        td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        tr:last-child td { border-bottom: none; }
+        
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
+        .badge-deposit { background: rgba(212, 175, 55, 0.2); color: var(--primary); }
+        .badge-full { background: rgba(39, 174, 96, 0.2); color: #27ae60; }
+        
+        .btn-delete { background: none; border: 1px solid var(--danger); color: var(--danger); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+        .btn-delete:hover { background: var(--danger); color: white; }
+        .empty-state { text-align: center; padding: 3rem; color: var(--text-dim); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">ADMIN<span>PANEL</span></div>
+        <a href="index.html" style="color: var(--text); text-decoration: none; font-size: 0.9rem;">← Back to Site</a>
+    </nav>
+
+    <main class="admin-container">
+        <header class="hero-text">
+            <h1>Daily Schedule</h1>
+            <p>Manage your upcoming appointments and revenue.</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Total Bookings</h4>
+                <p id="stat-count">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>Today</h4>
+                <p id="stat-today">0</p>
+            </div>
+            <div class="stat-card">
+                <h4>Est. Revenue</h4>
+                <p id="stat-revenue">$0</p>
+            </div>
+        </div>
+
+        <div id="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Payment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-table-body">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        function loadBookings() {
+            const db = JSON.parse(localStorage.getItem('barberBookings')) || [];
+            const tbody = document.getElementById('admin-table-body');
+            const todayStr = new Date().toISOString().split("T")[0];
+            
+            tbody.innerHTML = '';
+            
+            if (db.length === 0) {
+                document.getElementById('table-container').innerHTML = '<div class="empty-state">No appointments found yet.</div>';
+                return;
+            }
+
+            let revenue = 0;
+            let todayCount = 0;
+
+            // Sort by date and time
+            db.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+
+            db.forEach((booking, index) => {
+                // Calculate Stats
+                if (booking.date === todayStr) todayCount++;
+                revenue += booking.paid.includes('Deposit') ? 10 : parseInt(booking.paid.replace(/\D/g, ''));
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${booking.name}</strong></td>
+                    <td>${booking.service}</td>
+                    <td>${booking.date}</td>
+                    <td>${booking.time}</td>
+                    <td><span class="badge ${booking.paid.includes('Deposit') ? 'badge-deposit' : 'badge-full'}">${booking.paid}</span></td>
+                    <td><button class="btn-delete" onclick="deleteBooking(${index})">Cancel</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('stat-count').textContent = db.length;
+            document.getElementById('stat-today').textContent = todayCount;
+            document.getElementById('stat-revenue').textContent = `$${revenue}`;
+        }
+
+        function deleteBooking(index) {
+            if (confirm('Are you sure you want to cancel this appointment?')) {
+                const db = JSON.parse(localStorage.getItem('barberBookings')) || [];
+                db.splice(index, 1);
+                localStorage.setItem('barberBookings', JSON.stringify(db));
+                loadBookings();
+            }
+        }
+
+        // Run on load
+        loadBookings();
+    </script>
+</body>
+</html>
