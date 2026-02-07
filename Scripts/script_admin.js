@@ -122,4 +122,5 @@ window.deleteBooking = async function(id) {
 };
 
 // Start
+//Mamamia
 loadBookings();
