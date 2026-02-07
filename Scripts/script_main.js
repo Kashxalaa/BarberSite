@@ -1,9 +1,7 @@
 // 1. SUPABASE CONFIGURATION
 const SUPABASE_URL = 'https://rrcgnssytphudyvgjrce.supabase.co';
-// Replace this with your long "anon public" key from Supabase Settings -> API
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJyY2duc3N5dHBodWR5dmdqcmNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MDgxMDgsImV4cCI6MjA4NTk4NDEwOH0.0Vlds0jAfukc7OwL9nqrxyYjJV3ghLBMMVzQcV-OmFk';
 
-// Use _supabase to avoid conflict with the global supabase object
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // 2. DOM ELEMENTS
@@ -14,12 +12,20 @@ const timeSlotsContainer = document.getElementById('time-slots');
 const finalForm = document.getElementById('final-form');
 const serviceCards = document.querySelectorAll('.service-card');
 const totalDisplay = document.getElementById('total-display');
+const phoneInput = document.getElementById('user-phone'); // Added for phone number
 
 let selectedService = { name: "Haircut Only", price: 30 };
 let selectedTime = null;
 
 // Set minimum date to today
 dateInput.min = new Date().toISOString().split("T")[0];
+
+// --- PHONE FORMATTER HELPER ---
+// Automatically adds formatting as the user types
+phoneInput.addEventListener('input', (e) => {
+    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+    e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+});
 
 // 3. THEME TOGGLE
 themeToggle.addEventListener('click', () => {
@@ -39,7 +45,7 @@ serviceCards.forEach(card => {
     });
 });
 
-// 5. FETCH AND SHOW TIME SLOTS (SQL Version)
+// 5. FETCH AND SHOW TIME SLOTS
 dateInput.addEventListener('change', async () => {
     const date = dateInput.value;
     if(!date) return;
@@ -50,7 +56,6 @@ dateInput.addEventListener('change', async () => {
     const hours = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
     try {
-        // Query SQL Database for existing bookings on this date
         const { data: db, error } = await _supabase
             .from('bookings')
             .select('time')
@@ -72,6 +77,8 @@ dateInput.addEventListener('change', async () => {
                     btn.classList.add('selected');
                     selectedTime = time;
                     finalForm.classList.remove('hidden');
+                    // Scroll to form for better UX
+                    finalForm.scrollIntoView({ behavior: 'smooth' });
                 };
             } else {
                 btn.disabled = true;
@@ -80,11 +87,11 @@ dateInput.addEventListener('change', async () => {
         });
     } catch (err) {
         console.error("Database error:", err);
-        timeSlotsContainer.innerHTML = '<p style="color:var(--danger); grid-column: 1/-1;">Failed to load slots. Check API Key.</p>';
+        timeSlotsContainer.innerHTML = '<p style="color:var(--danger); grid-column: 1/-1;">Error loading slots.</p>';
     }
 });
 
-// 6. SAVE BOOKING (SQL Version)
+// 6. SAVE BOOKING (SQL Version with Phone)
 finalForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btnSubmit = e.target.querySelector('.btn-pay');
@@ -94,8 +101,11 @@ finalForm.addEventListener('submit', async (e) => {
     btnSubmit.disabled = true;
 
     const payMethod = document.querySelector('input[name="pay-method"]:checked').value;
+    
+    // Grab all field values
     const booking = {
         name: document.getElementById('user-name').value,
+        phone: document.getElementById('user-phone').value, // NEW: Capture Phone Number
         service: selectedService.name,
         date: dateInput.value,
         time: selectedTime,
@@ -112,7 +122,9 @@ finalForm.addEventListener('submit', async (e) => {
         // UI Changes on Success
         document.getElementById('booking-flow').classList.add('hidden');
         document.getElementById('success-msg').classList.remove('hidden');
-        document.getElementById('summary-text').innerHTML = `Set for <strong>${booking.time}</strong> on <strong>${booking.date}</strong>.`;
+        document.getElementById('summary-text').innerHTML = `Set for <strong>${booking.time}</strong> on <strong>${booking.date}</strong>.<br>We will contact you at <strong>${booking.phone}</strong> if anything changes.`;
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
         alert("Booking failed: " + err.message);
         btnSubmit.innerText = originalText;

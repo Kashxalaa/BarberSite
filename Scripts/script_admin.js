@@ -1,19 +1,18 @@
 // 1. SUPABASE CONFIGURATION
 const SUPABASE_URL = 'https://rrcgnssytphudyvgjrce.supabase.co';
-
-// CRITICAL: Replace the text below with your long 'anon public' key from Supabase Settings -> API
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJyY2duc3N5dHBodWR5dmdqcmNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MDgxMDgsImV4cCI6MjA4NTk4NDEwOH0.0Vlds0jAfukc7OwL9nqrxyYjJV3ghLBMMVzQcV-OmFk';
 
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const manualForm = document.getElementById('manual-booking-form');
 
-// 2. ADD MANUAL BOOKING (SQL VERSION)
+// 2. ADD MANUAL BOOKING
 manualForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const newBooking = {
-        name: document.getElementById('m-name').value + " 📞",
+        name: document.getElementById('m-name').value,
+        phone: document.getElementById('m-phone').value, // Capture the phone number
         service: document.getElementById('m-service').value,
         date: document.getElementById('m-date').value,
         time: document.getElementById('m-time').value,
@@ -21,7 +20,7 @@ manualForm.addEventListener('submit', async (e) => {
     };
 
     try {
-        // Check for existing booking in SQL
+        // Check for existing booking
         const { data: existing } = await _supabase
             .from('bookings')
             .select('id')
@@ -49,7 +48,8 @@ manualForm.addEventListener('submit', async (e) => {
 // 3. LOAD & RENDER BOOKINGS
 async function loadBookings() {
     const tbody = document.getElementById('admin-table-body');
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Refreshing schedule...</td></tr>';
+    // Updated colspan to 7 because we added the Phone column
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Refreshing schedule...</td></tr>';
 
     try {
         const { data: db, error } = await _supabase
@@ -78,6 +78,11 @@ async function loadBookings() {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td data-label="Customer"><strong>${booking.name}</strong></td>
+                <td data-label="Phone">
+                    <a href="tel:${booking.phone}" style="color:var(--primary); text-decoration:none;">
+                        ${booking.phone || 'No Phone'}
+                    </a>
+                </td>
                 <td data-label="Service">${booking.service}</td>
                 <td data-label="Date">${booking.date}</td>
                 <td data-label="Time">${booking.time}</td>
@@ -100,7 +105,7 @@ async function loadBookings() {
 
     } catch (err) {
         console.error("Load error:", err);
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ff4444">Connection Error. Verify API Key.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#ff4444">Connection Error.</td></tr>';
     }
 }
 
