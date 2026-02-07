@@ -1,3 +1,4 @@
+//Should Work
 // 1. SUPABASE CONFIGURATION
 const SUPABASE_URL = 'https://rrcgnssytphudyvgjrce.supabase.co';
 // Replace this with your long "anon public" key from Supabase Settings -> API
