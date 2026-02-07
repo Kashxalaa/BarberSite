@@ -1,7 +1,10 @@
 // 1. SUPABASE CONFIGURATION
 const SUPABASE_URL = 'https://rrcgnssytphudyvgjrce.supabase.co';
-const SUPABASE_KEY = '703cba2f-2718-4977-8aa8-16ba6311dfc4';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Replace this with your long "anon public" key from Supabase Settings -> API
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJyY2duc3N5dHBodWR5dmdqcmNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MDgxMDgsImV4cCI6MjA4NTk4NDEwOH0.0Vlds0jAfukc7OwL9nqrxyYjJV3ghLBMMVzQcV-OmFk';
+
+// Use _supabase to avoid conflict with the global supabase object
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // 2. DOM ELEMENTS
 const themeToggle = document.getElementById('theme-toggle');
@@ -39,13 +42,16 @@ serviceCards.forEach(card => {
 // 5. FETCH AND SHOW TIME SLOTS (SQL Version)
 dateInput.addEventListener('change', async () => {
     const date = dateInput.value;
+    if(!date) return;
+
     timeSlotsContainer.innerHTML = '<p style="color:var(--primary); grid-column: 1/-1;">Checking availability...</p>';
+    timeSection.classList.remove('hidden');
     
     const hours = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
     try {
         // Query SQL Database for existing bookings on this date
-        const { data: db, error } = await supabase
+        const { data: db, error } = await _supabase
             .from('bookings')
             .select('time')
             .eq('date', date);
@@ -61,7 +67,7 @@ dateInput.addEventListener('change', async () => {
             
             if (!isTaken) {
                 btn.onclick = (e) => {
-                    e.preventDefault(); // Prevent page jump
+                    e.preventDefault(); 
                     document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
                     btn.classList.add('selected');
                     selectedTime = time;
@@ -72,10 +78,9 @@ dateInput.addEventListener('change', async () => {
             }
             timeSlotsContainer.appendChild(btn);
         });
-        timeSection.classList.remove('hidden');
     } catch (err) {
         console.error("Database error:", err);
-        timeSlotsContainer.innerHTML = '<p style="color:var(--danger); grid-column: 1/-1;">Failed to load slots.</p>';
+        timeSlotsContainer.innerHTML = '<p style="color:var(--danger); grid-column: 1/-1;">Failed to load slots. Check API Key.</p>';
     }
 });
 
@@ -83,6 +88,8 @@ dateInput.addEventListener('change', async () => {
 finalForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btnSubmit = e.target.querySelector('.btn-pay');
+    const originalText = btnSubmit.innerText;
+    
     btnSubmit.innerText = "Processing...";
     btnSubmit.disabled = true;
 
@@ -96,7 +103,7 @@ finalForm.addEventListener('submit', async (e) => {
     };
 
     try {
-        const { data, error } = await supabase
+        const { data, error } = await _supabase
             .from('bookings')
             .insert([booking]);
 
@@ -108,7 +115,7 @@ finalForm.addEventListener('submit', async (e) => {
         document.getElementById('summary-text').innerHTML = `Set for <strong>${booking.time}</strong> on <strong>${booking.date}</strong>.`;
     } catch (err) {
         alert("Booking failed: " + err.message);
-        btnSubmit.innerText = "Reserve My Chair";
+        btnSubmit.innerText = originalText;
         btnSubmit.disabled = false;
     }
 });

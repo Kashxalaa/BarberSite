@@ -1,7 +1,10 @@
 // 1. SUPABASE CONFIGURATION
 const SUPABASE_URL = 'https://rrcgnssytphudyvgjrce.supabase.co';
-const SUPABASE_KEY = '703cba2f-2718-4977-8aa8-16ba6311dfc4';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// CRITICAL: Replace the text below with your long 'anon public' key from Supabase Settings -> API
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJyY2duc3N5dHBodWR5dmdqcmNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0MDgxMDgsImV4cCI6MjA4NTk4NDEwOH0.0Vlds0jAfukc7OwL9nqrxyYjJV3ghLBMMVzQcV-OmFk';
+
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const manualForm = document.getElementById('manual-booking-form');
 
@@ -18,39 +21,38 @@ manualForm.addEventListener('submit', async (e) => {
     };
 
     try {
-        // Check if slot is taken in SQL
-        const { data: existing } = await supabase
+        // Check for existing booking in SQL
+        const { data: existing } = await _supabase
             .from('bookings')
             .select('id')
             .eq('date', newBooking.date)
             .eq('time', newBooking.time);
 
         if (existing && existing.length > 0) {
-            alert("This slot is already occupied!");
+            alert("This time slot is already taken!");
             return;
         }
 
-        // Insert into SQL
-        const { error } = await supabase
+        const { error } = await _supabase
             .from('bookings')
             .insert([newBooking]);
 
         if (error) throw error;
 
         manualForm.reset();
-        loadBookings(); // Refresh table
+        loadBookings(); 
     } catch (err) {
-        alert("Error: " + err.message);
+        alert("Error saving: " + err.message);
     }
 });
 
-// 3. LOAD BOOKINGS (SQL VERSION)
+// 3. LOAD & RENDER BOOKINGS
 async function loadBookings() {
     const tbody = document.getElementById('admin-table-body');
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Loading schedule...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center">Refreshing schedule...</td></tr>';
 
     try {
-        const { data: db, error } = await supabase
+        const { data: db, error } = await _supabase
             .from('bookings')
             .select('*');
 
@@ -61,17 +63,16 @@ async function loadBookings() {
         let revenue = 0;
         let todayCount = 0;
 
-        // Sort by date and time
+        // Sort: Earliest date/time first
         db.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
 
         db.forEach((booking) => {
             if (booking.date === todayStr) todayCount++;
             
-            // Calculate revenue based on service
             let price = 0;
             if (booking.service === "Haircut Only") price = 30;
             else if (booking.service === "Hair & Beard") price = 45;
-            else if (booking.service === "The Royal Treatment") price = 65;
+            else price = 65;
             revenue += price;
 
             const row = document.createElement('tr');
@@ -92,22 +93,22 @@ async function loadBookings() {
             tbody.appendChild(row);
         });
 
-        // Update Stats
+        // Update Stats UI
         document.getElementById('stat-count').textContent = db.length;
         document.getElementById('stat-today').textContent = todayCount;
         document.getElementById('stat-revenue').textContent = `$${revenue}`;
 
     } catch (err) {
         console.error("Load error:", err);
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--danger)">Error loading data.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ff4444">Connection Error. Verify API Key.</td></tr>';
     }
 }
 
-// 4. DELETE BOOKING (SQL VERSION)
+// 4. DELETE BOOKING
 window.deleteBooking = async function(id) {
     if (confirm('Permanently remove this appointment?')) {
         try {
-            const { error } = await supabase
+            const { error } = await _supabase
                 .from('bookings')
                 .delete()
                 .eq('id', id);
@@ -120,5 +121,5 @@ window.deleteBooking = async function(id) {
     }
 };
 
-// Initial Load
+// Start
 loadBookings();
