@@ -1,153 +1,309 @@
 :root {
-    --primary: #D4AF37;
-    --bg: #0f1113;
-    --card-bg: rgba(255, 255, 255, 0.05);
+    /* Color Palette */
+    --primary: #c5a059;       /* Luxury Gold */
+    --bg-dark: #0f0f0f;      /* Deep Black */
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
     --text: #ffffff;
     --text-dim: #a0a0a0;
-    --border: rgba(255, 255, 255, 0.12);
-    --success: #27ae60;
-    --danger: #e74c3c;
+    --danger: #ff4444;
+    --success: #00ff88;
 }
 
 [data-theme="light"] {
-    --bg: #f5f5f7;
-    --card-bg: #ffffff;
+    --bg-dark: #f5f5f5;
+    --glass: rgba(0, 0, 0, 0.05);
+    --glass-border: rgba(0, 0, 0, 0.1);
     --text: #1a1a1a;
-    --text-dim: #666;
-    --border: #dddddd;
+    --text-dim: #666666;
 }
 
-* { box-sizing: border-box; transition: all 0.25s ease; }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
 
 body {
-    margin: 0; font-family: 'Inter', sans-serif;
-    background-color: var(--bg); color: var(--text);
-    min-height: 100vh; line-height: 1.6;
+    background: var(--bg-dark);
+    color: var(--text);
+    transition: background 0.3s ease;
+    overflow-x: hidden;
+    min-height: 100vh;
 }
 
+/* --- Animated Glow Background --- */
 .glow-bg {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at 10% 10%, rgba(212, 175, 55, 0.08), transparent 40%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% -20%, #c5a05933, transparent 50%);
     z-index: -1;
 }
 
+/* --- Navigation --- */
 .navbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 1.5rem 10%; border-bottom: 1px solid var(--border);
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border);
 }
 
-.logo { font-weight: 800; font-size: 1.4rem; letter-spacing: 2px; }
-.logo span { color: var(--primary); }
-
-.theme-btn {
-    background: var(--card-bg); border: 1px solid var(--border);
-    color: var(--text); padding: 10px; border-radius: 50%; cursor: pointer;
+.logo {
+    font-weight: 900;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
+.logo span {
+    color: var(--primary);
+}
+
+/* --- Layout Container --- */
 .booking-container {
-    display: grid; grid-template-columns: 1fr 1.2fr;
-    max-width: 1150px; margin: 4rem auto; gap: 4rem; padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
 }
 
-.section-title { 
-    margin-bottom: rem; font-size: 0.75rem; text-transform: uppercase; 
-    letter-spacing: 2px; color: var(--primary); font-weight: 700;
+/* --- Service Cards --- */
+.section-title {
+    font-size: 1rem;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.service-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .service-card {
-    background: var(--card-bg); border: 1px solid var(--border);
-    padding: 1.5rem; border-radius: 20px; margin-bottom: 1rem;
-    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    padding: 20px;
+    border-radius: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.service-card.selected { border-color: var(--primary); background: rgba(212, 175, 55, 0.05); }
-.service-info h3 { margin: 0; font-size: 1.1rem; }
-.service-info p { margin: 4px 0 0; font-size: 0.85rem; color: var(--text-dim); }
+.service-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--primary);
+}
+
+.service-card.selected {
+    border-color: var(--primary);
+    background: rgba(197, 160, 89, 0.1);
+    box-shadow: 0 0 20px rgba(197, 160, 89, 0.1);
+}
+
+.service-info h3 { font-size: 1.1rem; margin-bottom: 5px; color: var(--text); }
+.service-info p { font-size: 0.85rem; color: var(--text-dim); }
 .price { font-weight: 800; color: var(--primary); font-size: 1.2rem; }
 
-/* --- CUSTOM DATE INPUT DESIGN --- */
+/* --- Booking Flow Cards --- */
 .booking-glass-card {
-    margin-top: 6%;
-    background: var(--card-bg); border: 1px solid var(--border);
-    padding: 3rem; border-radius: 30px; backdrop-filter: blur(20px);
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    padding: 40px;
+    border-radius: 25px;
+    margin-bottom: 20px;
 }
 
-.input-wrapper label { 
-    display: block; margin-bottom: 12px; font-size: 0.75rem; 
-    text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; 
-    color: var(--primary); 
+.input-wrapper {
+    margin-bottom: 25px;
 }
 
-input[type="date"], input[type="text"] {
-    width: 100%; padding: 16px; border-radius: 14px;
-    border: 1px solid var(--border); background: rgba(255,255,255,0.03); 
-    color: var(--text); font-size: 1rem; font-family: inherit;
-    outline: none; appearance: none;
+.input-wrapper label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1); opacity: 0.6; cursor: pointer; transform: scale(1.2);
+input[type="date"],
+input[type="text"],
+input[type="tel"],
+select {
+    width: 100%;
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.3s;
 }
 
-[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0); }
+input:focus { border-color: var(--primary); }
 
-input:focus { border-color: var(--primary); background: rgba(212, 175, 55, 0.05); }
-
-/* --- VISUAL HIERARCHY SHIFT --- */
-.section-divider { 
-    display: flex; align-items: center; margin: 3rem 0 1.5rem; 
-    color: var(--text-dim); font-size: 0.75rem; font-weight: 700; 
-    text-transform: uppercase; letter-spacing: 2px; 
+/* --- Time Slots Grid --- */
+.slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
 }
 
-.section-divider::after { 
-    content: ""; flex: 1; height: 1px; 
-    background: linear-gradient(to right, var(--border), transparent); 
-    margin-left: 15px; 
-}
-
-.slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .slot {
-    padding: 14px; border-radius: 12px; border: 1.5px solid var(--border);
-    background: transparent; color: var(--text); font-weight: 700; cursor: pointer;
+    padding: 12px;
+    border: 1px solid var(--glass-border);
+    background: transparent;
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 600;
+    text-align: center;
 }
 
-.slot.available { border-color: var(--success); color: var(--success); }
-.slot.available:hover { background: var(--success); color: white; transform: translateY(-2px); }
-.slot.booked { border-color: var(--danger); color: var(--danger); opacity: 0.2; cursor: not-allowed; }
-.slot.selected { background: var(--primary); color: #000; border-color: var(--primary); }
+.slot.available:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
 
-.payment-box { margin: 2rem 0; }
-.pay-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
-.pay-options { display: flex; flex-direction: column; gap: 12px; }
+.slot.selected {
+    background: var(--primary);
+    color: black !important;
+    border-color: var(--primary);
+}
+
+.slot.booked {
+    opacity: 0.2;
+    cursor: not-allowed;
+    background: rgba(255,255,255,0.05);
+}
+
+/* --- FIXED PAYMENT BOX --- */
+.payment-box {
+    margin-top: 30px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+}
+
+.pay-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.pay-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
 .pay-choice {
-    display: flex; align-items: center; gap: 12px; padding: 16px;
-    background: rgba(0,0,0,0.15); border-radius: 14px; border: 1.5px solid var(--border); cursor: pointer;
+    position: relative;
+    cursor: pointer;
 }
 
+.pay-choice input {
+    position: absolute;
+    opacity: 0;
+}
+
+.pay-choice span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 10px;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    transition: all 0.3s ease;
+    text-align: center;
+    min-height: 85px;
+    line-height: 1.4;
+}
+
+.pay-choice:hover span {
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.pay-choice input:checked + span {
+    background: var(--primary);
+    color: #000;
+    border-color: var(--primary);
+    font-weight: 700;
+}
+
+/* CRITICAL: Fix for the inner box bug in your screenshot */
+#total-display {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline !important;
+    color: inherit !important; /* Inherits black when selected, white-ish when not */
+    font-weight: inherit;
+    font-size: inherit;
+}
+
+/* --- Buttons --- */
 .btn-pay {
-    width: 100%; padding: 18px; background: var(--primary); color: #000;
-    border: none; border-radius: 16px; font-weight: 900; cursor: pointer; 
-    text-transform: uppercase; letter-spacing: 2px; margin-top: 1rem;
+    width: 100%;
+    margin-top: 25px;
+    padding: 18px;
+    background: var(--primary);
+    color: black;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s;
+    letter-spacing: 1px;
 }
 
-.btn-pay:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3); }
+.btn-pay:hover { filter: brightness(1.2); transform: translateY(-2px); }
+.btn-pay:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* --- Utility --- */
 .hidden { display: none; }
-.animate-in { animation: fadeIn 0.4s ease-out forwards; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-in { animation: fadeInUp 0.5s ease forwards; }
 
-#success-msg { text-align: center; }
-.success-icon { 
-    width: 50px; height: 50px; background: var(--success); color: #fff; 
-    border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-    margin: 0 auto 1rem; font-size: 1.5rem; 
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.btn-outline {
-    background: transparent; border: 1px solid var(--primary); color: var(--primary);
-    padding: 12px 24px; border-radius: 12px; cursor: pointer; margin-top: 1.5rem;
+/* --- Responsive --- */
+@media (max-width: 900px) {
+    .booking-container { grid-template-columns: 1fr; margin-top: 20px; }
+    .navbar { padding: 15px 20px; }
 }
 
-@media (max-width: 900px) { .booking-container { grid-template-columns: 1fr; } }
+@media (max-width: 480px) {
+    .pay-options { grid-template-columns: 1fr; }
+    .pay-choice span { min-height: 70px; }
+    .booking-glass-card { padding: 25px; }
+}

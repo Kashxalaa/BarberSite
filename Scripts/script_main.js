@@ -95,13 +95,21 @@ finalForm.addEventListener('submit', async (e) => {
     btnSubmit.disabled = true;
 
     const payMethod = document.querySelector('input[name="pay-method"]:checked').value;
+   // const booking = {
+       // name: document.getElementById('user-name').value,
+       // service: selectedService.name,
+       // date: dateInput.value,
+        //time: selectedTime,
+        //paid: payMethod === 'deposit' ? '$10 Deposit' : `$${selectedService.price} Full`
+    //};
     const booking = {
-        name: document.getElementById('user-name').value,
-        service: selectedService.name,
-        date: dateInput.value,
-        time: selectedTime,
-        paid: payMethod === 'deposit' ? '$10 Deposit' : `$${selectedService.price} Full`
-    };
+    name: document.getElementById('user-name').value,
+    phone: document.getElementById('user-phone').value, // ADD THIS LINE
+    service: selectedService.name,
+    date: dateInput.value,
+    time: selectedTime,
+    paid: payMethod === 'deposit' ? '$10 Deposit' : `$${selectedService.price} Full`
+};
 
     try {
         const { data, error } = await _supabase
