@@ -67,7 +67,7 @@ body {
 .service-info p { margin: 4px 0 0; font-size: 0.85rem; color: var(--text-dim); }
 .price { font-weight: 800; color: var(--primary); font-size: 1.2rem; }
 
-/* --- CUSTOM DATE INPUT DESIGN --- */
+/* --- INPUT FIELDS (Now including Phone) --- */
 .booking-glass-card {
     margin-top: 10%;
     background: var(--card-bg); border: 1px solid var(--border);
@@ -80,7 +80,8 @@ body {
     color: var(--primary); 
 }
 
-input[type="date"], input[type="text"] {
+/* Applied styles to Name, Date, and the new Phone field */
+input[type="date"], input[type="text"], input[type="tel"] {
     width: 100%; padding: 16px; border-radius: 14px;
     border: 1px solid var(--border); background: rgba(255,255,255,0.03); 
     color: var(--text); font-size: 1rem; font-family: inherit;
@@ -95,7 +96,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 input:focus { border-color: var(--primary); background: rgba(212, 175, 55, 0.05); }
 
-/* --- VISUAL HIERARCHY SHIFT --- */
+/* --- SLOTS --- */
 .section-divider { 
     display: flex; align-items: center; margin: 3rem 0 1.5rem; 
     color: var(--text-dim); font-size: 0.75rem; font-weight: 700; 
@@ -112,6 +113,7 @@ input:focus { border-color: var(--primary); background: rgba(212, 175, 55, 0.05)
 .slot {
     padding: 14px; border-radius: 12px; border: 1.5px solid var(--border);
     background: transparent; color: var(--text); font-weight: 700; cursor: pointer;
+    text-align: center;
 }
 
 .slot.available { border-color: var(--success); color: var(--success); }
@@ -119,6 +121,7 @@ input:focus { border-color: var(--primary); background: rgba(212, 175, 55, 0.05)
 .slot.booked { border-color: var(--danger); color: var(--danger); opacity: 0.2; cursor: not-allowed; }
 .slot.selected { background: var(--primary); color: #000; border-color: var(--primary); }
 
+/* --- CHOOSE PAYMENT (LEFT UNCHANGED AS REQUESTED) --- */
 .payment-box { margin: 2rem 0; }
 .pay-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
 .pay-options { display: flex; flex-direction: column; gap: 12px; }
