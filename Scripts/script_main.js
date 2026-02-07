@@ -15,6 +15,7 @@ const finalForm = document.getElementById('final-form');
 const serviceCards = document.querySelectorAll('.service-card');
 const totalDisplay = document.getElementById('total-display');
 
+//veriables
 let selectedService = { name: "Haircut Only", price: 30 };
 let selectedTime = null;
 
