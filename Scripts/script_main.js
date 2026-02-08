@@ -12,29 +12,119 @@ const timeSlotsContainer = document.getElementById('time-slots');
 const finalForm = document.getElementById('final-form');
 const serviceCards = document.querySelectorAll('.service-card');
 const totalDisplay = document.getElementById('total-display');
-const phoneInput = document.getElementById('user-phone'); // Added for phone number
+const phoneInput = document.getElementById('user-phone');
+const langSwitch = document.getElementById('lang-switch');
+
+// 3. TRANSLATIONS DATA
+const translations = {
+    en: {
+        select_service: "Select Service",
+        s1_title: "Haircut Only",
+        s1_desc: "Clean fade or classic scissor cut",
+        s2_title: "Hair & Beard",
+        s2_desc: "Complete grooming & sculpt",
+        s3_title: "The Royal Treatment",
+        s3_desc: "Hair, Beard, and Hot Towel Shave",
+        pick_date: "Pick a Date",
+        avail_hours: "Available Hours",
+        finalize: "Finalize Appointment",
+        your_name: "Your Name",
+        phone_number: "Phone Number",
+        choose_pay: "Choose Payment",
+        pay_deposit: "Pay $10 Deposit",
+        pay_full: "Pay Full",
+        btn_reserve: "Reserve My Chair",
+        confirmed: "Confirmed!",
+        book_another: "Book Another",
+        name_placeholder: "Enter Full Name",
+        phone_placeholder: "Enter phone number",
+        processing: "Processing...",
+        error_slots: "Error loading slots.",
+        checking: "Checking availability..."
+    },
+    ru: {
+        select_service: "Выберите услугу",
+        s1_title: "Только стрижка",
+        s1_desc: "Чистый фейд или классика",
+        s2_title: "Стрижка и борода",
+        s2_desc: "Полный уход и моделирование",
+        s3_title: "Королевский уход",
+        s3_desc: "Волосы, борода и бритье горячим полотенцем",
+        pick_date: "Выберите дату",
+        avail_hours: "Доступное время",
+        finalize: "Завершить запись",
+        your_name: "Ваше имя",
+        phone_number: "Номер телефона",
+        choose_pay: "Способ оплаты",
+        pay_deposit: "Депозит $10",
+        pay_full: "Полная оплата",
+        btn_reserve: "Забронировать место",
+        confirmed: "Подтверждено!",
+        book_another: "Записаться еще раз",
+        name_placeholder: "Введите имя",
+        phone_placeholder: "Введите номер телефона",
+        processing: "Обработка...",
+        error_slots: "Ошибка загрузки.",
+        checking: "Проверка..."
+    },
+    ka: {
+        select_service: "აირჩიეთ მომსახურება",
+        s1_title: "მხოლოდ თმის შეჭრა",
+        s1_desc: "კლასიკური ან თანამედროვე ვარცხნილობა",
+        s2_title: "თმა და წვერი",
+        s2_desc: "სრული მოვლა და ფორმირება",
+        s3_title: "სამეფო მომსახურება",
+        s3_desc: "თმა, წვერი და პარსვა ცხელი პირსახოცით",
+        pick_date: "აირჩიეთ თარიღი",
+        avail_hours: "თავისუფალი საათები",
+        finalize: "ჯავშნის დასრულება",
+        your_name: "თქვენი სახელი",
+        phone_number: "ტელეფონის ნომერი",
+        choose_pay: "გადახდის მეთოდი",
+        pay_deposit: "დეპოზიტი $10",
+        pay_full: "სრული გადახდა",
+        btn_reserve: "დაჯავშნე ადგილი",
+        confirmed: "დადასტურებულია!",
+        book_another: "ახალი ჯავშანი",
+        name_placeholder: "შეიყვანეთ სახელი",
+        phone_placeholder: "შეიყვანეთ ნომერი",
+        processing: "მუშავდება...",
+        error_slots: "შეცდომა ჩატვირთვისას.",
+        checking: "მოწმდება..."
+    }
+};
 
 let selectedService = { name: "Haircut Only", price: 30 };
 let selectedTime = null;
 
-// Set minimum date to today
+// Initialize Date Input
 dateInput.min = new Date().toISOString().split("T")[0];
 
-// --- PHONE FORMATTER HELPER ---
-// Automatically adds formatting as the user types
-//phoneInput.addEventListener('input', (e) => {
-    //let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-    //e.target.value = !x[2] ? x[1] : '' + x[1] + ' ' + x[2] + (x[3] ? ' ' + x[3] : '');
-//});
+// 4. LANGUAGE LOGIC
+function setLanguage(lang) {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) el.textContent = translations[lang][key];
+    });
 
-// 3. THEME TOGGLE
+    document.querySelectorAll('[data-i18n-holder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-holder');
+        if (translations[lang][key]) el.placeholder = translations[lang][key];
+    });
+    
+    localStorage.setItem('preferredLang', lang);
+}
+
+langSwitch.addEventListener('change', (e) => setLanguage(e.target.value));
+
+// 5. THEME TOGGLE
 themeToggle.addEventListener('click', () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
     themeToggle.textContent = isDark ? '🌙' : '☀️';
 });
 
-// 4. SERVICE SELECTION
+// 6. SERVICE SELECTION
 serviceCards.forEach(card => {
     card.addEventListener('click', () => {
         serviceCards.forEach(c => c.classList.remove('selected'));
@@ -45,12 +135,13 @@ serviceCards.forEach(card => {
     });
 });
 
-// 5. FETCH AND SHOW TIME SLOTS
+// 7. FETCH TIME SLOTS
 dateInput.addEventListener('change', async () => {
     const date = dateInput.value;
+    const currentLang = langSwitch.value;
     if(!date) return;
 
-    timeSlotsContainer.innerHTML = '<p style="color:var(--primary); grid-column: 1/-1;">Checking availability...</p>';
+    timeSlotsContainer.innerHTML = `<p style="color:var(--primary); grid-column: 1/-1;">${translations[currentLang].checking}</p>`;
     timeSection.classList.remove('hidden');
     
     const hours = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
@@ -77,7 +168,6 @@ dateInput.addEventListener('change', async () => {
                     btn.classList.add('selected');
                     selectedTime = time;
                     finalForm.classList.remove('hidden');
-                    // Scroll to form for better UX
                     finalForm.scrollIntoView({ behavior: 'smooth' });
                 };
             } else {
@@ -86,26 +176,25 @@ dateInput.addEventListener('change', async () => {
             timeSlotsContainer.appendChild(btn);
         });
     } catch (err) {
-        console.error("Database error:", err);
-        timeSlotsContainer.innerHTML = '<p style="color:var(--danger); grid-column: 1/-1;">Error loading slots.</p>';
+        timeSlotsContainer.innerHTML = `<p style="color:var(--danger); grid-column: 1/-1;">${translations[currentLang].error_slots}</p>`;
     }
 });
 
-// 6. SAVE BOOKING (SQL Version with Phone)
+// 8. SAVE BOOKING
 finalForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btnSubmit = e.target.querySelector('.btn-pay');
+    const currentLang = langSwitch.value;
+    const btnSubmit = document.getElementById('submit-btn');
     const originalText = btnSubmit.innerText;
     
-    btnSubmit.innerText = "Processing...";
+    btnSubmit.innerText = translations[currentLang].processing;
     btnSubmit.disabled = true;
 
     const payMethod = document.querySelector('input[name="pay-method"]:checked').value;
     
-    // Grab all field values
     const booking = {
         name: document.getElementById('user-name').value,
-        phone: document.getElementById('user-phone').value, // NEW: Capture Phone Number
+        phone: document.getElementById('user-phone').value,
         service: selectedService.name,
         date: dateInput.value,
         time: selectedTime,
@@ -113,17 +202,20 @@ finalForm.addEventListener('submit', async (e) => {
     };
 
     try {
-        const { data, error } = await _supabase
-            .from('bookings')
-            .insert([booking]);
-
+        const { error } = await _supabase.from('bookings').insert([booking]);
         if (error) throw error;
 
-        // UI Changes on Success
         document.getElementById('booking-flow').classList.add('hidden');
         document.getElementById('success-msg').classList.remove('hidden');
-        document.getElementById('summary-text').innerHTML = `Set for <strong>${booking.time}</strong> on <strong>${booking.date}</strong>.<br>We will contact you at <strong>${booking.phone}</strong> if anything changes.`;
         
+        // Dynamic success message based on language
+        const successMsg = currentLang === 'ka' ? 
+            `დაჯავშნილია <strong>${booking.time}</strong>-ზე, <strong>${booking.date}</strong>. ჩვენ დაგიკავშირდებით ნომერზე: <strong>${booking.phone}</strong>.` :
+            currentLang === 'ru' ? 
+            `Записано на <strong>${booking.time}</strong>, <strong>${booking.date}</strong>. Мы свяжемся с вами по номеру: <strong>${booking.phone}</strong>.` :
+            `Set for <strong>${booking.time}</strong> on <strong>${booking.date}</strong>. We will contact you at <strong>${booking.phone}</strong>.`;
+
+        document.getElementById('summary-text').innerHTML = successMsg;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
         alert("Booking failed: " + err.message);
@@ -131,3 +223,8 @@ finalForm.addEventListener('submit', async (e) => {
         btnSubmit.disabled = false;
     }
 });
+
+// Init Language on Load
+const savedLang = localStorage.getItem('preferredLang') || 'en';
+langSwitch.value = savedLang;
+setLanguage(savedLang);

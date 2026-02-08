@@ -5,41 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BLACK BARBER | Premium Bookings</title>
     <link rel="stylesheet" href="Styles/style_main.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+Georgian:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="glow-bg"></div>
     
     <nav class="navbar">
         <div class="logo">BLACK<span>BARBER</span></div>
-        <!-- <a href="admin.html" style="color: var(--text-dim); text-decoration: none; font-size: 0.8rem;">Admin Panel</a> -->
-        <button id="theme-toggle" class="theme-btn">🌙</button>
+        
+        <div class="nav-actions">
+            <button id="theme-toggle" class="theme-btn">🌙</button>
+            
+            <div class="lang-selector">
+                <select id="lang-switch">
+                    <option value="en">EN</option>
+                    <option value="ru">RU</option>
+                    <option value="ka">GE</option>
+                </select>
+            </div>
+        </div>
     </nav>
 
     <main class="booking-container">
         <section class="services-sidebar">
-            <h2 class="section-title">Select Service</h2>
+            <h2 class="section-title" data-i18n="select_service">Select Service</h2>
             <div class="service-list">
                 <div class="service-card selected" data-price="30" data-name="Haircut Only">
                     <div class="service-info">
-                        <h3>Haircut Only</h3>
-                        <p>Clean fade or classic scissor cut</p>
+                        <h3 data-i18n="s1_title">Haircut Only</h3>
+                        <p data-i18n="s1_desc">Clean fade or classic scissor cut</p>
                     </div>
                     <span class="price">$30</span>
                 </div>
 
                 <div class="service-card" data-price="45" data-name="Hair & Beard">
                     <div class="service-info">
-                        <h3>Hair & Beard</h3>
-                        <p>Complete grooming & sculpt</p>
+                        <h3 data-i18n="s2_title">Hair & Beard</h3>
+                        <p data-i18n="s2_desc">Complete grooming & sculpt</p>
                     </div>
                     <span class="price">$45</span>
                 </div>
 
                 <div class="service-card" data-price="65" data-name="The Royal Treatment">
                     <div class="service-info">
-                        <h3>The Royal Treatment</h3>
-                        <p>Hair, Beard, and Hot Towel Shave</p>
+                        <h3 data-i18n="s3_title">The Royal Treatment</h3>
+                        <p data-i18n="s3_desc">Hair, Beard, and Hot Towel Shave</p>
                     </div>
                     <span class="price">$65</span>
                 </div>
@@ -49,51 +59,51 @@
         <section class="booking-main">
             <div id="booking-flow" class="booking-glass-card">
                 <div class="input-wrapper">
-                    <label>Pick a Date</label>
+                    <label data-i18n="pick_date">Pick a Date</label>
                     <input type="date" id="booking-date">
                 </div>
 
                 <div id="time-section" class="hidden animate-in">
-                    <div class="section-divider"><span>Available Hours</span></div>
+                    <div class="section-divider"><span data-i18n="avail_hours">Available Hours</span></div>
                     <div id="time-slots" class="slots-grid"></div>
                 </div>
 
                 <form id="final-form" class="hidden animate-in">
-                    <div class="section-divider"><span>Finalize Appointment</span></div>
+                    <div class="section-divider"><span data-i18n="finalize">Finalize Appointment</span></div>
                     
                 <div class="input-wrapper animate-in">
-                    <label>Your Name</label>
-                    <input type="text" id="user-name" required placeholder="Enter Full Name">
+                    <label data-i18n="your_name">Your Name</label>
+                    <input type="text" id="user-name" required placeholder="Enter Full Name" data-i18n-holder="name_placeholder">
                 </div>
 
                 <div class="input-wrapper animate-in">
-                    <label>Phone Number</label>
-                    <input type="tel" id="user-phone" required placeholder="Enter phone number">
+                    <label data-i18n="phone_number">Phone Number</label>
+                    <input type="tel" id="user-phone" required placeholder="Enter phone number" data-i18n-holder="phone_placeholder">
                 </div>
                     
                     <div class="payment-box">
-                        <p class="pay-label">Choose Payment</p>
+                        <p class="pay-label" data-i18n="choose_pay">Choose Payment</p>
                         <div class="pay-options">
                             <label class="pay-choice">
                                 <input type="radio" name="pay-method" value="deposit" checked>
-                                <span>Pay $10 Deposit</span>
+                                <span data-i18n="pay_deposit">Pay $10 Deposit</span>
                             </label>
                             <label class="pay-choice">
                                 <input type="radio" name="pay-method" value="full">
-                                <span>Pay Full (<span id="total-display">$30</span>)</span>
+                                <span><span data-i18n="pay_full">Pay Full</span> (<span id="total-display">$30</span>)</span>
                             </label>
                         </div>
                     </div>
 
-                    <button type="submit" id="submit-btn" class="btn-pay">Reserve My Chair</button>
+                    <button type="submit" id="submit-btn" class="btn-pay" data-i18n="btn_reserve">Reserve My Chair</button>
                 </form>
             </div>
 
             <div id="success-msg" class="booking-glass-card hidden animate-in">
                 <div class="success-icon">✓</div>
-                <h2>Confirmed!</h2>
+                <h2 data-i18n="confirmed">Confirmed!</h2>
                 <p id="summary-text"></p>
-                <button class="btn-outline" onclick="location.reload()">Book Another</button>
+                <button class="btn-outline" onclick="location.reload()" data-i18n="book_another">Book Another</button>
             </div>
         </section>
     </main>
