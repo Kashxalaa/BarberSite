@@ -22,10 +22,10 @@ dateInput.min = new Date().toISOString().split("T")[0];
 
 // --- PHONE FORMATTER HELPER ---
 // Automatically adds formatting as the user types
-phoneInput.addEventListener('input', (e) => {
-    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
-    e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
-});
+//phoneInput.addEventListener('input', (e) => {
+    //let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+    //e.target.value = !x[2] ? x[1] : '' + x[1] + ' ' + x[2] + (x[3] ? ' ' + x[3] : '');
+//});
 
 // 3. THEME TOGGLE
 themeToggle.addEventListener('click', () => {
