@@ -14,7 +14,8 @@
     --card-bg: #ffffff;
     --text: #1a1a1a;
     --text-dim: #666;
-    --border: #dddddd;
+    --border: #666666;
+    --primary: #856e23;
 }
 
 * { 
