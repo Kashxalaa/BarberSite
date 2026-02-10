@@ -4,18 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BLACK BARBER | Premium Bookings</title>
-    <link rel="stylesheet" href="Styles/style_main.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+Georgian:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Styles/Main/booking.css">
+    <link rel="stylesheet" href="Styles/Main/navbar.css">
+    <link rel="stylesheet" href="Styles/Main/portfolio.css">
+    <link rel="stylesheet" href="Styles/Main/variables.css">
+    <!-- <link rel="stylesheet" href="Styles/Main/style_main.css"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+Georgian:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="glow-bg"></div>
     
     <nav class="navbar">
         <div class="logo">BLACK<span>BARBER</span></div>
-        
+        <a href="admin.html">mamamia</a>         <!-- SHOULD BE DELETED OR HIDDEN IN PRODUCTION -->
         <div class="nav-actions">
             <button id="theme-toggle" class="theme-btn">🌙</button>
-            
             <div class="lang-selector">
                 <select id="lang-switch">
                     <option value="en">EN</option>
@@ -37,7 +40,6 @@
                     </div>
                     <span class="price">$30</span>
                 </div>
-
                 <div class="service-card" data-price="45" data-name="Hair & Beard">
                     <div class="service-info">
                         <h3 data-i18n="s2_title">Hair & Beard</h3>
@@ -45,7 +47,6 @@
                     </div>
                     <span class="price">$45</span>
                 </div>
-
                 <div class="service-card" data-price="65" data-name="The Royal Treatment">
                     <div class="service-info">
                         <h3 data-i18n="s3_title">The Royal Treatment</h3>
@@ -70,17 +71,14 @@
 
                 <form id="final-form" class="hidden animate-in">
                     <div class="section-divider"><span data-i18n="finalize">Finalize Appointment</span></div>
-                    
-                <div class="input-wrapper animate-in">
-                    <label data-i18n="your_name">Your Name</label>
-                    <input type="text" id="user-name" required placeholder="Enter Full Name" data-i18n-holder="name_placeholder">
-                </div>
-
-                <div class="input-wrapper animate-in">
-                    <label data-i18n="phone_number">Phone Number</label>
-                    <input type="tel" id="user-phone" required placeholder="Enter phone number" data-i18n-holder="phone_placeholder">
-                </div>
-                    
+                    <div class="input-wrapper animate-in">
+                        <label data-i18n="your_name">Your Name</label>
+                        <input type="text" id="user-name" required placeholder="Enter Full Name" data-i18n-holder="name_placeholder">
+                    </div>
+                    <div class="input-wrapper animate-in">
+                        <label data-i18n="phone_number">Phone Number</label>
+                        <input type="tel" id="user-phone" required placeholder="Enter phone number" data-i18n-holder="phone_placeholder">
+                    </div>
                     <div class="payment-box">
                         <p class="pay-label" data-i18n="choose_pay">Choose Payment</p>
                         <div class="pay-options">
@@ -94,7 +92,6 @@
                             </label>
                         </div>
                     </div>
-
                     <button type="submit" id="submit-btn" class="btn-pay" data-i18n="btn_reserve">Reserve My Chair</button>
                 </form>
             </div>
@@ -108,7 +105,29 @@
         </section>
     </main>
 
+    <section class="portfolio-section">
+        <h2 class="section-title" data-i18n="our_work">Our Recent Work</h2>
+        <div class="gallery-scroll">
+            <div class="work-item"><img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=500" alt="Fade"></div>
+            <div class="work-item"><img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=500" alt="Beard"></div>
+            <div class="work-item"><img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=500" alt="Style"></div>
+            <div class="work-item"><img src="https://images.unsplash.com/photo-1512690196236-4bcc134a621a?q=80&w=500" alt="Classic"></div>
+        </div>
+    </section>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="Scripts/script_main.js"></script>
+    <script src="Scripts/Main/config.js"></script>
+    <script src="Scripts/Main/i18n.js"></script>
+    <script src="Scripts/Main/ui.js"></script>
+    <script src="Scripts/Main/booking.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferredLang') || 'en';
+            const langSelector = document.getElementById('lang-switch');
+            if(langSelector) langSelector.value = savedLang;
+            setLanguage(savedLang);
+    });
+</script>
 </body>
 </html>

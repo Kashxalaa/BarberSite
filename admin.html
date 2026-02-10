@@ -3,18 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barber Dashboard | SHARP & DAPPER</title>
-    <link rel="stylesheet" href="Styles/style_main.css" >
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>Barber Dashboard | ADMIN PANEL</title>
+    
+    <link rel="stylesheet" href="Styles/style_main.css">
     <link rel="stylesheet" href="Styles/style_admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
         const pin = prompt("Enter Admin PIN:");
         if (pin !== "1234") { // Change 1234 to your secret code
             alert("Access Denied");
             window.location.href = "index.html";
         }
-</script>
+    </script>
+
+    <style>
+        /* Extra styling for the Admin sections to ensure they align well */
+        .admin-grid-top {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .blocked-date-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 900px) {
+            .admin-grid-top { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -23,44 +51,68 @@
     </nav>
 
     <main class="admin-container">
-        <section class="manual-booking-card">
-            <h3>Add Appointment (Phone/Walk-in)</h3>
-            <form id="manual-booking-form" class="manual-form-grid">
-                <div class="field-group">
-                    <label>Client Name</label>
-                    <input type="text" id="m-name" required placeholder="Full Name">
-                </div>
+        
+        <div class="admin-grid-top">
+            
+            <section class="manual-booking-card">
+                <h3>Add Appointment (Phone/Walk-in)</h3>
+                <form id="manual-booking-form" class="manual-form-grid">
+                    <div class="field-group">
+                        <label>Client Name</label>
+                        <input type="text" id="m-name" required placeholder="Full Name">
+                    </div>
 
+                    <div class="field-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="m-phone" placeholder="Customer Phone">
+                    </div>
+                    
+                    <div class="field-group">
+                        <label>Service</label>
+                        <select id="m-service">
+                            <option value="Haircut Only">Haircut Only ($30)</option>
+                            <option value="Hair & Beard">Hair & Beard ($45)</option>
+                            <option value="The Royal Treatment">The Royal Treatment ($65)</option>
+                        </select>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Date</label>
+                        <input type="date" id="m-date" required>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Time</label>
+                        <select id="m-time">
+                            <option value="09:00">09:00</option><option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option><option value="12:00">12:00</option>
+                            <option value="13:00">13:00</option><option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option><option value="16:00">16:00</option>
+                            <option value="17:00">17:00</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-add">Confirm Booking</button>
+                </form>
+            </section>
+
+            <section class="manual-booking-card">
+                <h3>Manage Schedule (Days Off)</h3>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">
+                    Select a date to block it for vacations or holidays.
+                </p>
                 <div class="field-group">
-                    <label>Phone Number</label>
-                    <input type="tel" id="m-phone" placeholder="Customer Phone">
+                    <label>Block Specific Date</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="date" id="block-date" style="flex: 1;">
+                        <button class="btn-add" style="background: var(--danger); width: auto; padding: 0 20px;" onclick="blockDate()">Block</button>
+                    </div>
                 </div>
                 
-                <div class="field-group">
-                    <label>Service</label>
-                    <select id="m-service">
-                        <option value="Haircut Only">Haircut Only ($30)</option>
-                        <option value="Hair & Beard">Hair & Beard ($45)</option>
-                        <option value="The Royal Treatment">The Royal Treatment ($65)</option>
-                    </select>
-                </div>
-                <div class="field-group">
-                    <label>Date</label>
-                    <input type="date" id="m-date" required>
-                </div>
-                <div class="field-group">
-                    <label>Time</label>
-                    <select id="m-time">
-                        <option value="09:00">09:00</option><option value="10:00">10:00</option>
-                        <option value="11:00">11:00</option><option value="12:00">12:00</option>
-                        <option value="13:00">13:00</option><option value="14:00">14:00</option>
-                        <option value="15:00">15:00</option><option value="16:00">16:00</option>
-                        <option value="17:00">17:00</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn-add">Confirm Booking</button>
-            </form>
-        </section>
+                <div class="section-divider">Currently Blocked</div>
+                <div id="blocked-list" style="margin-top: 15px; max-height: 180px; overflow-y: auto;">
+                    </div>
+            </section>
+        </div>
 
         <div class="stats-grid">
             <div class="stat-card"><h4>Active Appointments</h4><p id="stat-count">0</p></div>
@@ -70,21 +122,23 @@
 
         <div style="margin-bottom: 20px;">
             <input type="text" id="admin-search" placeholder="Search by name or phone..." 
-                   style="width: 100%; padding: 12px; border-radius: 8px; background: var(--admin-card); border: 1px solid #333; color: white;">
+                   style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid #333; color: white;">
         </div>
 
         <table>
             <thead>
                 <tr>
                     <th>Customer</th>
-                    <th>Phone</th> <th>Service</th>
+                    <th>Phone</th> 
+                    <th>Service</th>
                     <th>Date</th>
                     <th>Time</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody id="admin-table-body"></tbody>
+            <tbody id="admin-table-body">
+                </tbody>
         </table>
     </main>
 

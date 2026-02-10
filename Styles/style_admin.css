@@ -2,70 +2,172 @@
     --admin-accent: #D4AF37;
     --admin-bg-alt: #1a1d21;
     --input-focus: #2a2e35;
+    --danger: #e74c3c; /* Added for delete/block actions */
 }
-.admin-container { max-width: 1000px; margin: 2rem auto; padding: 0 2rem; }
 
-/* Manual Entry Form */
+.admin-container { 
+    max-width: 1200px; /* Increased slightly for the new side-by-side layout */
+    margin: 2rem auto; 
+    padding: 0 2rem; 
+}
+
+/* --- TOP GRID LAYOUT --- */
+.admin-grid-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+/* --- CARDS (Manual Booking & Vacation) --- */
 .manual-booking-card {
     background: var(--admin-bg-alt);
     border: 1px solid var(--admin-accent);
-    padding: 2.5rem;
+    padding: 2rem;
     border-radius: 24px;
-    margin-bottom: 3rem;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
 }
+
 .manual-booking-card h3 { 
     margin-top: 0; color: var(--admin-accent); 
     text-transform: uppercase; letter-spacing: 2px;
     font-size: 1.1rem; margin-bottom: 1.5rem;
 }
+
 .manual-form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 20px; align-items: flex-end;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px; 
+    align-items: flex-end;
 }
+
 .field-group { display: flex; flex-direction: column; gap: 8px; }
+
 .field-group label {
     font-size: 0.75rem; font-weight: 700;
     text-transform: uppercase; color: var(--admin-accent);
 }
-.manual-form-grid input, .manual-form-grid select {
-    width: 100%; padding: 14px; border-radius: 12px;
+
+.manual-form-grid input, 
+.manual-form-grid select {
+    width: 100%; padding: 12px; border-radius: 12px;
     border: 1px solid var(--border); background: #000;
-    color: #fff; font-size: 1rem; outline: none;
+    color: #fff; font-size: 0.9rem; outline: none;
 }
+
 .btn-add {
     background: var(--admin-accent); color: #000;
-    border: none; padding: 15px; border-radius: 12px;
+    border: none; padding: 14px; border-radius: 12px;
     font-weight: 900; text-transform: uppercase; cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
 }
-/* Stats */
-.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
-.stat-card { background: var(--card-bg); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); text-align: center; }
+
+.btn-add:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+/* --- BLOCKED DATES LIST --- */
+#blocked-list {
+    margin-top: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.blocked-date-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+
+.blocked-date-item span {
+    font-family: monospace;
+    font-weight: 600;
+}
+
+.btn-remove-date {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* --- STATS --- */
+.stats-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 1.5rem; 
+    margin-bottom: 2rem; 
+}
+
+.stat-card { 
+    background: var(--card-bg); 
+    padding: 1.5rem; 
+    border-radius: 16px; 
+    border: 1px solid var(--border); 
+    text-align: center; 
+}
+
+.stat-card h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; }
 .stat-card p { font-size: 1.8rem; font-weight: 800; color: var(--admin-accent); margin: 0; }
 
-/* --- MOBILE RESPONSIVE TABLE --- */
+/* --- TABLE STYLES --- */
 table { width: 100%; border-collapse: collapse; background: transparent; }
 
 thead { background: rgba(212, 175, 55, 0.15); }
-th { color: var(--admin-accent); text-align: left; padding: 1.2rem; font-size: 0.8rem; text-transform: uppercase; }
+
+th { 
+    color: var(--admin-accent); 
+    text-align: left; 
+    padding: 1.2rem; 
+    font-size: 0.8rem; 
+    text-transform: uppercase; 
+}
 
 tbody tr { background: var(--card-bg); border-bottom: 8px solid var(--bg); }
+
 td { padding: 1.2rem; font-size: 0.95rem; color: var(--text); }
 
+/* --- UTILITIES & BADGES --- */
 .badge { padding: 6px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 800; }
 .badge-manual { background: #444; color: #fff; }
 .badge-deposit { background: rgba(39, 174, 96, 0.2); color: #27ae60; }
 
-.btn-delete { background: none; border: 1px solid var(--danger); color: var(--danger); padding: 6px 12px; border-radius: 8px; cursor: pointer; }
-/* MOBILE VIEW LOGIC */
+.btn-delete { 
+    background: none; 
+    border: 1px solid var(--danger); 
+    color: var(--danger); 
+    padding: 6px 12px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    transition: 0.2s;
+}
+
+.btn-delete:hover {
+    background: var(--danger);
+    color: white;
+}
+
+/* --- MOBILE RESPONSIVE --- */
+@media (max-width: 900px) {
+    .admin-grid-top { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 768px) {
     .stats-grid { grid-template-columns: 1fr; gap: 10px; }
     
-    /* Hide the table headers */
     thead { display: none; }
     
-    /* Make every row a card */
     tbody tr {
         display: block;
         margin-bottom: 20px;
@@ -74,23 +176,23 @@ td { padding: 1.2rem; font-size: 0.95rem; color: var(--text); }
         padding: 15px;
         background: var(--card-bg);
     }
-    /* Make every cell a line in the card */
+    
     td {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 5px;
+        padding: 12px 5px;
         border-bottom: 1px solid rgba(255,255,255,0.05);
         text-align: right;
     }
+    
     td:last-child { border-bottom: none; }
-    /* Add labels before the data */
+    
     td::before {
         content: attr(data-label);
         font-weight: 700;
         text-transform: uppercase;
         font-size: 0.7rem;
         color: var(--admin-accent);
-        float: left;
     }
 }

@@ -5,14 +5,95 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const manualForm = document.getElementById('manual-booking-form');
+const searchInput = document.getElementById('admin-search');
 
-// 2. ADD MANUAL BOOKING
+// --- 2. VACATION / DAY OFF LOGIC ---
+
+// Fetch and display blocked dates from Supabase
+async function loadBlockedDates() {
+    const listContainer = document.getElementById('blocked-list');
+    
+    try {
+        const { data: blocked, error } = await _supabase
+            .from('blocked_dates')
+            .select('*')
+            .order('date', { ascending: true });
+
+        if (error) throw error;
+
+        listContainer.innerHTML = '';
+        if (!blocked || blocked.length === 0) {
+            listContainer.innerHTML = '<p style="color:var(--text-dim); font-size:0.8rem;">No dates blocked.</p>';
+            return;
+        }
+
+        blocked.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'blocked-date-item';
+            div.innerHTML = `
+                <span>📅 ${item.date}</span>
+                <button class="btn-remove-date" onclick="unblockDate('${item.date}')" title="Unblock Date">×</button>
+            `;
+            listContainer.appendChild(div);
+        });
+    } catch (err) {
+        console.error("Error loading blocked dates:", err);
+    }
+}
+
+// Block a new date
+window.blockDate = async function() {
+    const dateInput = document.getElementById('block-date');
+    const dateVal = dateInput.value;
+
+    if (!dateVal) {
+        alert("Please select a date first.");
+        return;
+    }
+
+    try {
+        const { error } = await _supabase
+            .from('blocked_dates')
+            .insert([{ date: dateVal }]);
+
+        if (error) {
+            if (error.code === '23505') alert("This date is already blocked!");
+            else throw error;
+        } else {
+            dateInput.value = '';
+            loadBlockedDates();
+        }
+    } catch (err) {
+        alert("Error blocking date: " + err.message);
+    }
+};
+
+// Unblock a date
+window.unblockDate = async function(date) {
+    if (!confirm(`Open shop again on ${date}?`)) return;
+
+    try {
+        const { error } = await _supabase
+            .from('blocked_dates')
+            .delete()
+            .eq('date', date);
+
+        if (error) throw error;
+        loadBlockedDates();
+    } catch (err) {
+        alert("Error unblocking: " + err.message);
+    }
+};
+
+
+// --- 3. MANUAL BOOKING LOGIC ---
+
 manualForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const newBooking = {
         name: document.getElementById('m-name').value,
-        phone: document.getElementById('m-phone').value, // Capture the phone number
+        phone: document.getElementById('m-phone').value,
         service: document.getElementById('m-service').value,
         date: document.getElementById('m-date').value,
         time: document.getElementById('m-time').value,
@@ -45,10 +126,11 @@ manualForm.addEventListener('submit', async (e) => {
     }
 });
 
-// 3. LOAD & RENDER BOOKINGS
+
+// --- 4. LOAD & RENDER BOOKINGS ---
+
 async function loadBookings() {
     const tbody = document.getElementById('admin-table-body');
-    // Updated colspan to 7 because we added the Phone column
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center">Refreshing schedule...</td></tr>';
 
     try {
@@ -58,50 +140,10 @@ async function loadBookings() {
 
         if (error) throw error;
 
-        const todayStr = new Date().toISOString().split("T")[0];
-        tbody.innerHTML = '';
-        let revenue = 0;
-        let todayCount = 0;
-
-        // Sort: Earliest date/time first
-        db.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
-
-        db.forEach((booking) => {
-            if (booking.date === todayStr) todayCount++;
-            
-            let price = 0;
-            if (booking.service === "Haircut Only") price = 30;
-            else if (booking.service === "Hair & Beard") price = 45;
-            else price = 65;
-            revenue += price;
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td data-label="Customer"><strong>${booking.name}</strong></td>
-                <td data-label="Phone">
-                    <a href="tel:${booking.phone}" style="color:var(--primary); text-decoration:none;">
-                        ${booking.phone || 'No Phone'}
-                    </a>
-                </td>
-                <td data-label="Service">${booking.service}</td>
-                <td data-label="Date">${booking.date}</td>
-                <td data-label="Time">${booking.time}</td>
-                <td data-label="Status">
-                    <span class="badge ${booking.paid === 'Manual Entry' ? 'badge-manual' : 'badge-deposit'}">
-                        ${booking.paid}
-                    </span>
-                </td>
-                <td data-label="Action">
-                    <button class="btn-delete" onclick="deleteBooking('${booking.id}')">Remove</button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-
-        // Update Stats UI
-        document.getElementById('stat-count').textContent = db.length;
-        document.getElementById('stat-today').textContent = todayCount;
-        document.getElementById('stat-revenue').textContent = `$${revenue}`;
+        // Store globally for search filtering
+        window.allBookings = db;
+        renderTable(db);
+        updateStats(db);
 
     } catch (err) {
         console.error("Load error:", err);
@@ -109,7 +151,74 @@ async function loadBookings() {
     }
 }
 
-// 4. DELETE BOOKING
+function renderTable(bookings) {
+    const tbody = document.getElementById('admin-table-body');
+    const todayStr = new Date().toISOString().split("T")[0];
+    tbody.innerHTML = '';
+
+    // Sort: Earliest date/time first
+    bookings.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+
+    bookings.forEach((booking) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td data-label="Customer"><strong>${booking.name}</strong></td>
+            <td data-label="Phone">
+                <a href="tel:${booking.phone}" style="color:var(--admin-accent); text-decoration:none;">
+                    ${booking.phone || 'No Phone'}
+                </a>
+            </td>
+            <td data-label="Service">${booking.service}</td>
+            <td data-label="Date">${booking.date}</td>
+            <td data-label="Time">${booking.time}</td>
+            <td data-label="Status">
+                <span class="badge ${booking.paid === 'Manual Entry' ? 'badge-manual' : 'badge-deposit'}">
+                    ${booking.paid}
+                </span>
+            </td>
+            <td data-label="Action">
+                <button class="btn-delete" onclick="deleteBooking('${booking.id}')">Remove</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function updateStats(bookings) {
+    const todayStr = new Date().toISOString().split("T")[0];
+    let revenue = 0;
+    let todayCount = 0;
+
+    bookings.forEach(b => {
+        if (b.date === todayStr) todayCount++;
+        
+        let price = 0;
+        if (b.service === "Haircut Only") price = 30;
+        else if (b.service === "Hair & Beard") price = 45;
+        else price = 65;
+        revenue += price;
+    });
+
+    document.getElementById('stat-count').textContent = bookings.length;
+    document.getElementById('stat-today').textContent = todayCount;
+    document.getElementById('stat-revenue').textContent = `$${revenue}`;
+}
+
+
+// --- 5. SEARCH LOGIC ---
+
+searchInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    const filtered = window.allBookings.filter(b => 
+        b.name.toLowerCase().includes(term) || 
+        (b.phone && b.phone.includes(term))
+    );
+    renderTable(filtered);
+});
+
+
+// --- 6. DELETE BOOKING ---
+
 window.deleteBooking = async function(id) {
     if (confirm('Permanently remove this appointment?')) {
         try {
@@ -126,5 +235,6 @@ window.deleteBooking = async function(id) {
     }
 };
 
-// Start
+// Initialize everything
 loadBookings();
+loadBlockedDates();
